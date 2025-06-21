@@ -1,12 +1,14 @@
+
 import React from 'react';
 import { useNotes } from '@/contexts/NotesContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import { FilePlus, Trash2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 const NotesList = () => {
-  const { filteredNotes, selectedNote, selectNote, createNote, deleteNote } = useNotes();
+  const { filteredNotes, selectedNote, selectNote, createNote, deleteNote, toggleNoteCompletion } = useNotes();
 
   const formatDate = (date: Date) => {
     return formatDistanceToNow(date, { addSuffix: true });
@@ -62,13 +64,23 @@ const NotesList = () => {
                   selectedNote?.id === note.id
                     ? 'bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200 shadow-sm'
                     : 'bg-white/50 border-gray-200 hover:bg-white/80 hover:border-purple-200'
-                }`}
+                } ${note.completed ? 'opacity-75' : ''}`}
                 onClick={() => selectNote(note)}
               >
                 <div className="flex items-start justify-between mb-2">
-                  <h3 className="font-medium text-gray-800 truncate flex-1 mr-2">
-                    {note.title || 'Untitled Note'}
-                  </h3>
+                  <div className="flex items-start gap-3 flex-1">
+                    <Checkbox
+                      checked={note.completed}
+                      onCheckedChange={() => toggleNoteCompletion(note.id)}
+                      onClick={(e) => e.stopPropagation()}
+                      className="mt-1"
+                    />
+                    <h3 className={`font-medium text-gray-800 truncate flex-1 mr-2 ${
+                      note.completed ? 'line-through text-gray-500' : ''
+                    }`}>
+                      {note.title || 'Untitled Note'}
+                    </h3>
+                  </div>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -83,13 +95,15 @@ const NotesList = () => {
                 </div>
                 
                 {note.content && (
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-3">
+                  <p className={`text-sm text-gray-600 mb-3 line-clamp-3 ml-7 ${
+                    note.completed ? 'line-through text-gray-400' : ''
+                  }`}>
                     {truncateContent(note.content)}
                   </p>
                 )}
                 
                 {note.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mb-3">
+                  <div className="flex flex-wrap gap-1 mb-3 ml-7">
                     {note.tags.slice(0, 3).map((tag, index) => (
                       <Badge key={index} variant="secondary" className="text-xs">
                         {tag}
@@ -103,7 +117,7 @@ const NotesList = () => {
                   </div>
                 )}
                 
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-gray-500 ml-7">
                   {formatDate(note.updatedAt)}
                 </div>
               </div>

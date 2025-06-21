@@ -7,6 +7,7 @@ export interface Note {
   content: string;
   tags: string[];
   category: string;
+  completed: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -31,6 +32,7 @@ interface NotesContextType {
   setSearchQuery: (query: string) => void;
   addCategory: (name: string, color: string) => void;
   deleteCategory: (id: string) => void;
+  toggleNoteCompletion: (id: string) => void;
   filteredNotes: Note[];
 }
 
@@ -58,6 +60,7 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (savedNotes) {
       const parsedNotes = JSON.parse(savedNotes).map((note: any) => ({
         ...note,
+        completed: note.completed || false, // Add default value for existing notes
         createdAt: new Date(note.createdAt),
         updatedAt: new Date(note.updatedAt),
       }));
@@ -85,6 +88,7 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       content: '',
       tags: [],
       category: selectedCategory === 'all' ? 'personal' : selectedCategory,
+      completed: false,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -104,6 +108,20 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     
     if (selectedNote?.id === id) {
       setSelectedNote(prev => prev ? { ...prev, ...updates, updatedAt: new Date() } : null);
+    }
+  };
+
+  const toggleNoteCompletion = (id: string) => {
+    setNotes(prev =>
+      prev.map(note =>
+        note.id === id
+          ? { ...note, completed: !note.completed, updatedAt: new Date() }
+          : note
+      )
+    );
+    
+    if (selectedNote?.id === id) {
+      setSelectedNote(prev => prev ? { ...prev, completed: !prev.completed, updatedAt: new Date() } : null);
     }
   };
 
@@ -164,6 +182,7 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setSearchQuery,
         addCategory,
         deleteCategory,
+        toggleNoteCompletion,
         filteredNotes,
       }}
     >

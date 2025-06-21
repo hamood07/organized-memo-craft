@@ -5,11 +5,12 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tag, Trash2 } from 'lucide-react';
 
 const NoteEditor = () => {
-  const { selectedNote, updateNote, categories } = useNotes();
+  const { selectedNote, updateNote, categories, toggleNoteCompletion } = useNotes();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [category, setCategory] = useState('');
@@ -71,14 +72,23 @@ const NoteEditor = () => {
     <div className="flex-1 bg-white/60 backdrop-blur-sm h-full flex flex-col">
       {/* Header */}
       <div className="p-6 border-b border-purple-100 bg-white/80">
-        <Input
-          value={title}
-          onChange={(e) => handleTitleChange(e.target.value)}
-          className="text-2xl font-bold border-none bg-transparent p-0 focus:ring-0 focus:border-none placeholder:text-gray-400"
-          placeholder="Note title..."
-        />
+        <div className="flex items-start gap-3 mb-4">
+          <Checkbox
+            checked={selectedNote.completed}
+            onCheckedChange={() => toggleNoteCompletion(selectedNote.id)}
+            className="mt-2"
+          />
+          <Input
+            value={title}
+            onChange={(e) => handleTitleChange(e.target.value)}
+            className={`text-2xl font-bold border-none bg-transparent p-0 focus:ring-0 focus:border-none placeholder:text-gray-400 flex-1 ${
+              selectedNote.completed ? 'line-through text-gray-500' : ''
+            }`}
+            placeholder="Note title..."
+          />
+        </div>
         
-        <div className="flex items-center gap-4 mt-4">
+        <div className="flex items-center gap-4 ml-7">
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-600">Category:</span>
             <Select value={category} onValueChange={handleCategoryChange}>
@@ -145,7 +155,9 @@ const NoteEditor = () => {
           value={content}
           onChange={(e) => handleContentChange(e.target.value)}
           placeholder="Start writing your note..."
-          className="w-full h-full border-none bg-transparent resize-none focus:ring-0 focus:border-none text-base leading-relaxed"
+          className={`w-full h-full border-none bg-transparent resize-none focus:ring-0 focus:border-none text-base leading-relaxed ${
+            selectedNote.completed ? 'line-through text-gray-500' : ''
+          }`}
         />
       </div>
     </div>
