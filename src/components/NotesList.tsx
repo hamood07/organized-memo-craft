@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { useNotes } from '@/contexts/NotesContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Fileplus, Trash2 } from 'lucide-react';
+import { FilePlus, Trash2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 const NotesList = () => {
@@ -31,7 +30,7 @@ const NotesList = () => {
             size="sm"
             className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
           >
-            <Fileplus className="w-4 h-4 mr-2" />
+            <FilePlus className="w-4 h-4 mr-2" />
             New Note
           </Button>
         </div>
@@ -42,7 +41,7 @@ const NotesList = () => {
         {filteredNotes.length === 0 ? (
           <div className="p-8 text-center">
             <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-purple-100 to-blue-100 rounded-full flex items-center justify-center">
-              <Fileplus className="w-8 h-8 text-purple-400" />
+              <FilePlus className="w-8 h-8 text-purple-400" />
             </div>
             <h3 className="text-lg font-medium text-gray-700 mb-2">No notes found</h3>
             <p className="text-sm text-gray-500 mb-4">Create your first note to get started</p>
@@ -50,7 +49,7 @@ const NotesList = () => {
               onClick={createNote}
               className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
             >
-              <Fileplus className="w-4 h-4 mr-2" />
+              <FilePlus className="w-4 h-4 mr-2" />
               Create Note
             </Button>
           </div>
