@@ -7,21 +7,21 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-# Stage 2: Serve with Nginx (non-root user)
+# Stage 2: Serve with Nginx (non-root user with UID 10001)
 FROM nginx:stable-alpine
 
-# Create a non-root user and group
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+# Create a non-root user with UID 10001
+RUN addgroup -g 10001 appgroup && adduser -u 10001 -G appgroup -S appuser
 
-# Remove default content and copy built app
+# Clean default files and copy app
 RUN rm -rf /usr/share/nginx/html/*
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Set permissions
-RUN chown -R appuser:appgroup /usr/share/nginx/html
+# Set permissions for non-root user
+RUN chown -R 10001:10001 /usr/share/nginx/html
 
-# Run as non-root user
-USER appuser
+# Use secure, non-root user
+USER 10001
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
